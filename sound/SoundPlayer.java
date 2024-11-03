@@ -30,7 +30,12 @@ public class SoundPlayer{
         Sound sound = soundBank.getSound(id);
 
         Thread thread = new Thread(() -> {
-            sound.play();
+            try{
+                sound.play();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
         });
         thread.run();
         soundThreads.put(sound, thread);

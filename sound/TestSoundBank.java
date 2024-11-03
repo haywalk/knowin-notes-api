@@ -10,12 +10,7 @@ public class TestSoundBank extends SoundBank {
 
     @Override
     protected void populateSoundMap() {
-        try{
-            addSound(BACKGROUND, new Sound(PATH_TO_SOUNDS + BACKGROUND + WAV_EXT));
-            addSound(SFX, new Sound(PATH_TO_SOUNDS + SFX + WAV_EXT));
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+        addSound(BACKGROUND, new Sound(PATH_TO_SOUNDS + BACKGROUND + WAV_EXT));
+        addSound(SFX, new Sound(PATH_TO_SOUNDS + SFX + WAV_EXT));
     }
 }

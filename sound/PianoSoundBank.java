@@ -20,23 +20,18 @@ public class PianoSoundBank extends SoundBank{
 
     @Override
     protected void populateSoundMap() {
-        try{
-            addSound(C4, new Sound(PATH_TO_SOUNDS + C4 + WAV_EXT));
-            addSound(CS4, new Sound(PATH_TO_SOUNDS + CS4 + WAV_EXT));
-            addSound(D4, new Sound(PATH_TO_SOUNDS + D4 + WAV_EXT));
-            addSound(DS4, new Sound(PATH_TO_SOUNDS + DS4 + WAV_EXT));
-            addSound(E4, new Sound(PATH_TO_SOUNDS + E4 + WAV_EXT));
-            addSound(F4, new Sound(PATH_TO_SOUNDS + F4 + WAV_EXT));
-            addSound(FS4, new Sound(PATH_TO_SOUNDS + FS4 + WAV_EXT));
-            addSound(G4, new Sound(PATH_TO_SOUNDS + G4 + WAV_EXT));
-            addSound(GS4, new Sound(PATH_TO_SOUNDS + GS4 + WAV_EXT));
-            addSound(A4, new Sound(PATH_TO_SOUNDS + A4 + WAV_EXT));
-            addSound(AS4, new Sound(PATH_TO_SOUNDS + AS4 + WAV_EXT));
-            addSound(B4, new Sound(PATH_TO_SOUNDS + B4 + WAV_EXT));
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+        addSound(C4, new Sound(PATH_TO_SOUNDS + C4 + WAV_EXT));
+        addSound(CS4, new Sound(PATH_TO_SOUNDS + CS4 + WAV_EXT));
+        addSound(D4, new Sound(PATH_TO_SOUNDS + D4 + WAV_EXT));
+        addSound(DS4, new Sound(PATH_TO_SOUNDS + DS4 + WAV_EXT));
+        addSound(E4, new Sound(PATH_TO_SOUNDS + E4 + WAV_EXT));
+        addSound(F4, new Sound(PATH_TO_SOUNDS + F4 + WAV_EXT));
+        addSound(FS4, new Sound(PATH_TO_SOUNDS + FS4 + WAV_EXT));
+        addSound(G4, new Sound(PATH_TO_SOUNDS + G4 + WAV_EXT));
+        addSound(GS4, new Sound(PATH_TO_SOUNDS + GS4 + WAV_EXT));
+        addSound(A4, new Sound(PATH_TO_SOUNDS + A4 + WAV_EXT));
+        addSound(AS4, new Sound(PATH_TO_SOUNDS + AS4 + WAV_EXT));
+        addSound(B4, new Sound(PATH_TO_SOUNDS + B4 + WAV_EXT));
     }
 
 }
