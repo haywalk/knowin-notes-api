@@ -27,6 +27,7 @@ public class SoundPlayer{
      * @param id An identifying {@code String} for the {@code Sound} to be played.
      */
     public void playSound(String id){
+        stopSound(id); // Avoids doubling up on same sounds.
         Sound sound = soundBank.getSound(id);
 
         Thread thread = new Thread(() -> {
