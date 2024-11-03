@@ -1,11 +1,15 @@
 package sound;
 
+import java.io.File;
 import java.util.HashMap;
 
 /**
  * An abstract class for mapping sound identifiers to {@code Sound} objects.
  */
 public abstract class SoundBank{
+
+    protected static final String PATH_TO_SOUNDS = ".wav" + File.separator;
+    protected static final String WAV_EXT = ".wav";
 
     private HashMap<String, Sound> soundMap;
 

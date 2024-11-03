@@ -1,8 +1,5 @@
 package sound;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
  * A {@code SoundBank} containing piano sounds.
  */
@@ -20,8 +17,6 @@ public class PianoSoundBank extends SoundBank{
     public static final String A4 = "a4";
     public static final String AS4 = "a#4";
     public static final String B4 = "b4";
-    private static final String PATH_TO_SOUNDS = ".wav" + File.pathSeparator;
-    private static final String WAV_EXT = ".wav";
 
     @Override
     protected void populateSoundMap() {
@@ -39,10 +34,7 @@ public class PianoSoundBank extends SoundBank{
             addSound(AS4, new Sound(PATH_TO_SOUNDS + AS4 + WAV_EXT));
             addSound(B4, new Sound(PATH_TO_SOUNDS + B4 + WAV_EXT));
         }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        catch (SoundFileException e){
+        catch(Exception e){
             e.printStackTrace();
         }
     }
