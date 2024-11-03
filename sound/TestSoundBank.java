@@ -1,5 +1,8 @@
 package sound;
 
+/**
+ * An example {@code SoundBank} with which the {@code SoundPlayer} can be tested.
+ */
 public class TestSoundBank extends SoundBank {
 
     public static final String BACKGROUND = "background";
