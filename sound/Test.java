@@ -17,8 +17,6 @@ public class Test {
         sleep(2000);
         // Cease playing the background music
         sp.stopSound(TestSoundBank.BACKGROUND);
-        // Clean up the sound player (may not be necessary as the program closes)
-        sp.closeSounds();
     }
 
     /**

@@ -54,16 +54,5 @@ public abstract class SoundBank{
         }
 
         return soundMap.get(id);
-    } 
-
-    /**
-     * Closes all of the {@code Sound}s in the {@code SoundBank}. 
-     * Must be called before the {@code SoundBank} goes out of scope.
-     */
-    public void closeSounds(){
-        for(Sound sound : soundMap.values()){
-            sound.close();
-        }
     }
-
 }

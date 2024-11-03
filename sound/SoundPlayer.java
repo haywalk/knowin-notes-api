@@ -66,11 +66,4 @@ public class SoundPlayer{
         this.soundBank = soundBank;
     }
 
-    /**
-     * Frees up all {@code Sound} resources being currently used. 
-     */
-    public void closeSounds(){
-        this.soundBank.closeSounds();
-    }
-
 }

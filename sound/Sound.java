@@ -65,14 +65,4 @@ public class Sound {
             clip.stop();
         }
     }
-
-    /**
-     * Closes this sound's clip. 
-     * Must be called to free resources when Sound goes out of scope
-     */
-    public void close(){
-        if(clip != null){
-            clip.close();
-        }
-    }
 }
