@@ -1,8 +1,8 @@
 package sound;
 
-import java.io.File;
 import java.io.IOException;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
@@ -14,6 +14,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Sound {
 
+    private String path;
     private Clip clip;
 
     /**
@@ -23,18 +24,31 @@ public class Sound {
      * @throws SoundFileException If the file is in an unsupported format or 
      * if the line is unavailable (something else is likely already using the file).
      */
-    public Sound(String path) throws IOException, SoundFileException {
-        File soundFile = new File(path);
-        // ensure file exists
-        if(!soundFile.exists()){
-            throw new IOException("The given file does not exist: " + path);
-        }
+    public Sound(String path) {
+        this.path = path;
+    }
 
-        // Prepare the clip.
+    /**
+     * Plays the sound from the beginning.
+     */
+    public void play() throws IOException, SoundFileException {
+        
+        // Play the clip
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+            // Get a clip that audio can be played on.
             clip = AudioSystem.getClip();
+            // Close the line the clip in on when the clip finishes playing to free resources
+            clip.addLineListener(event -> {
+                if(LineEvent.Type.STOP.equals(event.getType())){
+                    event.getLine().close();
+                }
+            });
+            // Convert the audio file to an input stream
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(path));
+            // Have the clip read from the audio file/input stream
             clip.open(audioInputStream);
+            // Start playing the clip
+            clip.start();
         } catch (UnsupportedAudioFileException e){
             throw new SoundFileException("Unsupported audio file: " + path);
         } 
@@ -44,15 +58,8 @@ public class Sound {
     }
 
     /**
-     * Plays the sound from the beginning.
+     * Makes the sound stop playing.
      */
-    public void play() {
-        if (clip != null) {
-            clip.setFramePosition(0); // rewind to the beginning
-            clip.start();
-        }
-    }
-
     public void stop(){
         if(clip != null){
             clip.stop();
@@ -67,12 +74,5 @@ public class Sound {
         if(clip != null){
             clip.close();
         }
-    }
-
-    /**
-     * @return The Clip from which this Sound is based. 
-     */
-    public Clip getClip(){
-        return clip;
     }
 }
