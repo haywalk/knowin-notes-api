@@ -14,7 +14,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Sound {
 
-    private String path;
     private Clip clip;
 
     /**
@@ -24,16 +23,8 @@ public class Sound {
      * @throws SoundFileException If the file is in an unsupported format or 
      * if the line is unavailable (something else is likely already using the file).
      */
-    public Sound(String path) {
-        this.path = path;
-    }
-
-    /**
-     * Plays the sound from the beginning.
-     */
-    public void play() throws IOException, SoundFileException {
-        
-        // Play the clip
+    public Sound(String path) throws IOException, SoundFileException {
+        // Prepare clip
         try {
             // Get a clip that audio can be played on.
             clip = AudioSystem.getClip();
@@ -47,14 +38,22 @@ public class Sound {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(path));
             // Have the clip read from the audio file/input stream
             clip.open(audioInputStream);
-            // Start playing the clip
-            clip.start();
         } catch (UnsupportedAudioFileException e){
             throw new SoundFileException("Unsupported audio file: " + path);
         } 
         catch (LineUnavailableException e) {
             throw new SoundFileException("Line unavailable: " + path);
         }
+    }
+
+    /**
+     * Plays the sound from the beginning.
+     */
+    public void play() {
+        if(clip != null){
+            // Start playing the clip
+            clip.start();
+        }        
     }
 
     /**
