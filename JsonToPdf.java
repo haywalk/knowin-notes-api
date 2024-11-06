@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -27,7 +28,18 @@ public class JsonToPdf {
         //create a pdf document to put the results in
         PDDocument outputDoc = new PDDocument();
         PDPage page = new PDPage();
+        outputDoc.addPage(page);
 
-        
+        //must put next section in try/catch since PDPageContentStream throws IOException
+        try { 
+            PDPageContentStream contentStream = new PDPageContentStream(outputDoc, page);
+            contentStream.setFont(PDType1Font.TIMES_BOLD, 12);
+            contentStream.newLineAtOffset(50, 700);
+
+            //field names in order should be: 'Date', 'Time', 'GameMode', 'clef', 'notetypes', 'Gameduration', 'notesInGame', 'timePerNote', 'accuracy'
+            
+        }
+
+
     }
 }
