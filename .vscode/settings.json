@@ -1,0 +1,12 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\10era\\OneDrive - Mount Allison University\\Documents\\COMP 4721\\pdf_gen_branch\\fontbox-3.0.3.jar",
+        "c:\\Users\\10era\\OneDrive - Mount Allison University\\Documents\\COMP 4721\\pdf_gen_branch\\pdfbox-3.0.3.jar",
+        "c:\\Users\\10era\\OneDrive - Mount Allison University\\Documents\\COMP 4721\\pdf_gen_branch\\pdfbox-debugger-3.0.3.jar",
+        "c:\\Users\\10era\\OneDrive - Mount Allison University\\Documents\\COMP 4721\\pdf_gen_branch\\pdfbox-io-3.0.3.jar",
+        "c:\\Users\\10era\\OneDrive - Mount Allison University\\Documents\\COMP 4721\\pdf_gen_branch\\pdfbox-tools-3.0.3.jar",
+        "c:\\Users\\10era\\OneDrive - Mount Allison University\\Documents\\COMP 4721\\pdf_gen_branch\\preflight-3.0.3.jar",
+        "c:\\Users\\10era\\OneDrive - Mount Allison University\\Documents\\COMP 4721\\pdf_gen_branch\\xmpbox-3.0.3.jar"
+    ]
+}
