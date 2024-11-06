@@ -21,25 +21,29 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class JsonToPdf {
 
     public static void main(String[] args) {
-
+        
     }
 
-    private void convertJsonToPdf(JsonNode data, String filepath){
+    private void convertJsonToPdf(JsonNode data, String filePath){
         //create a pdf document to put the results in
         PDDocument outputDoc = new PDDocument();
         PDPage page = new PDPage();
         outputDoc.addPage(page);
 
         //must put next section in try/catch since PDPageContentStream throws IOException
-        try { 
-            PDPageContentStream contentStream = new PDPageContentStream(outputDoc, page);
+        try (PDPageContentStream contentStream = new PDPageContentStream(outputDoc, page)){ 
             contentStream.setFont(PDType1Font.TIMES_BOLD, 12);
             contentStream.newLineAtOffset(50, 700);
 
             //field names in order should be: 'Date', 'Time', 'GameMode', 'clef', 'notetypes', 'Gameduration', 'notesInGame', 'timePerNote', 'accuracy'
-            
+            Iterator<String> fieldNames = data.fieldNames();
+            while(fieldNames.hasNext()){
+                String currentField = fieldNames.next();
+                contentStream.showText(currentField + ": " + data.get(currentField).asText());
+                contentStream.newLineAtOffset(0, -15);
+            }
+            contentStream.endText();
         }
-
-
+        outputDoc.save(new File(filePath));
     }
 }
