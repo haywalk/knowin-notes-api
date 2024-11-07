@@ -20,10 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class JsonToPdf {
 
-    public static void main(String[] args) {
-        
-    }
-
     private void convertJsonToPdf(JsonNode data, String filePath){
         //create a pdf document to put the results in
         PDDocument outputDoc = new PDDocument();
@@ -31,6 +27,7 @@ public class JsonToPdf {
         outputDoc.addPage(page);
 
         //must put next section in try/catch since PDPageContentStream throws IOException
+        //shouldnt throw exception here
         try (PDPageContentStream contentStream = new PDPageContentStream(outputDoc, page)){ 
             contentStream.setFont(PDType1Font.TIMES_BOLD, 12);
             contentStream.newLineAtOffset(50, 700);
@@ -47,3 +44,5 @@ public class JsonToPdf {
         outputDoc.save(new File(filePath));
     }
 }
+//separate convert and save methods
+//make public static, empty private constructor
