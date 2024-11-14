@@ -30,10 +30,10 @@ public class JsonToPdf {
      * @param report Report as a JSON string.
      * @param file PDF file.
      */
-    public static void savePDF(String report, String file) {
+    public static void savePDF(String report, File file) {
         try {
             PDDocument outputDoc = produceReportPDF(new JSONObject(report));
-            outputDoc.save(new File(file));
+            outputDoc.save(file);
         } catch(IOException e) {
 
         }

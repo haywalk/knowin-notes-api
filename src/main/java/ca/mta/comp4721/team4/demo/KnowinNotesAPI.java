@@ -1,10 +1,17 @@
 package ca.mta.comp4721.team4.demo;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,10 +84,37 @@ public class KnowinNotesAPI {
 	 * @param id Report ID.
 	 * @return PDF file.
 	 */
+	// @GetMapping("/api/GENERATE_PDF")
+	// public String generatePDF(@RequestParam(value = "id", defaultValue = "") String id) {
+	// 	String report = ReportDB.instance().getReportByID(Integer.parseInt(id));
+	// 	JsonToPdf.savePDF(report, "report.pdf");
+	// 	return "done";
+	// }
 	@GetMapping("/api/GENERATE_PDF")
-	public String generatePDF(@RequestParam(value = "id", defaultValue = "") String id) {
+	public ResponseEntity<byte[]> generatePDF(@RequestParam(value = "id", defaultValue = "") String id) throws IOException{
+		// open file
+		File output = new File("report.pdf");
+		
+		// produce pdf
 		String report = ReportDB.instance().getReportByID(Integer.parseInt(id));
-		JsonToPdf.savePDF(report, "report.pdf");
-		return "done";
+		JsonToPdf.savePDF(report, output);
+
+		// get pdf as array of bytes
+		byte[] contents = FileUtils.readFileToByteArray(output);
+
+		// lines from here down are based on
+		// https://stackoverflow.com/questions/16652760/return-generated-pdf-using-spring-mvc
+
+		// set the HTTP content typu
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_PDF);
+
+		// set download file name
+		headers.setContentDispositionFormData("report.pdf", "report.pdf");
+		headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+		// send response
+		ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
+		return response;
 	}
 }
