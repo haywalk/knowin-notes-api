@@ -32,7 +32,7 @@ public class KnowinNotesAPI {
 	 */
 	@GetMapping("/api/LIST_REPORTS")
 	public String listReports() {
-		return "yolo";
+		return ReportDB.instance().getReports();
 	}
 	
 	/**
@@ -43,7 +43,7 @@ public class KnowinNotesAPI {
 	 */
 	@GetMapping("/api/GET_REPORT")
 	public String listReports(@RequestParam(value = "id", defaultValue = "") String id) {
-		return "yolo";
+		return ReportDB.instance().getReportByID(Integer.parseInt(id));
 	}
 
 	/**
@@ -59,11 +59,16 @@ public class KnowinNotesAPI {
 		String JSONstring = new String(decoded, StandardCharsets.UTF_8);
 		
 		// parse into a State object
-		State oldState = new State(JSONstring);
-		oldState.update(); // update State
+		State state = new State(JSONstring);
+		state.update(); // update State
+
+		if(state.isFinished()) {
+			ReportDB.instance().addReport(state.toReport()); // store report in database
+			return "REPORT" + state.toReport();
+		}
 
 		// return to JSON
-		return oldState.toJSON();
+		return "STATE" + state.toJSON();
 	}
 
 	/**
@@ -74,6 +79,8 @@ public class KnowinNotesAPI {
 	 */
 	@GetMapping("/api/GENERATE_PDF")
 	public String generatePDF(@RequestParam(value = "id", defaultValue = "") String id) {
-		return "asdf";
+		String report = ReportDB.instance().getReportByID(Integer.parseInt(id));
+		JsonToPdf.savePDF(report, "report.pdf");
+		return "done";
 	}
 }
