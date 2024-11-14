@@ -21,6 +21,12 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	// https://mvnrepository.com/artifact/org.json/json
+	implementation("org.json:json:20210307")
+	// https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
+	implementation("org.apache.pdfbox:pdfbox:2.0.23")
+	// https://mvnrepository.com/artifact/commons-io/commons-io
+	implementation("commons-io:commons-io:2.9.0")
 }
 
 tasks.withType<Test> {
