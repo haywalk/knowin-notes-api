@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,7 @@ public class KnowinNotesAPI {
 	 * 
 	 * @return JSON list of report IDs.
 	 */
+	@CrossOrigin
 	@GetMapping("/api/LIST_REPORTS")
 	public String listReports() {
 		return ReportDB.instance().getReports();
@@ -48,6 +50,7 @@ public class KnowinNotesAPI {
 	 * @param id Report ID.
 	 * @return Report as a JSON string.
 	 */
+	@CrossOrigin
 	@GetMapping("/api/GET_REPORT")
 	public String listReports(@RequestParam(value = "id", defaultValue = "") String id) {
 		return ReportDB.instance().getReportByID(Integer.parseInt(id));
@@ -59,6 +62,7 @@ public class KnowinNotesAPI {
 	 * @param oldStateEncoded Old state as a JSON string encoded in base64.
 	 * @return New state as a JSON string.
 	 */
+	@CrossOrigin
 	@GetMapping("/api/GET_STATE")
 	public String getState(@RequestParam(value = "old", defaultValue = "") String oldStateEncoded) {
 		// oldstate is JSON.stringify -> base64
@@ -90,6 +94,7 @@ public class KnowinNotesAPI {
 	// 	JsonToPdf.savePDF(report, "report.pdf");
 	// 	return "done";
 	// }
+	@CrossOrigin
 	@GetMapping("/api/GENERATE_PDF")
 	public ResponseEntity<byte[]> generatePDF(@RequestParam(value = "id", defaultValue = "") String id) throws IOException{
 		// open file
