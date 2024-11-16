@@ -11,5 +11,6 @@
         "c:\\Users\\10era\\Downloads\\jar_files\\jackson-annotations-2.18.0-rc1.jar",
         "c:\\Users\\10era\\Downloads\\jar_files\\jackson-databind-2.18.0-rc1.jar",
         "c:\\Users\\10era\\Downloads\\jar_files\\jackson-core-2.18.0-rc1.jar"
-    ]
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
 }
