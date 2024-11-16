@@ -86,7 +86,7 @@ public class State {
      * @return The state as a JSON object.
      */
     public String toJSON() {
-        return ""; // TODO implement
+        return jsonObject.toString();
     }
 
     /**
@@ -104,6 +104,6 @@ public class State {
      * @return Report as a JSON string.
      */
     public String toReport() {
-        return ""; // TODO implement
+        return "{}"; // TODO implement
     }
 }
