@@ -47,19 +47,37 @@ public class State {
     private JSONObject jsonObject;
 
     /**
+     * {@code true} if the game is finished.
+     */
+    private boolean isFinished;
+
+    /**
      * Create a new State object from a JSON string.
      * 
      * @param JSONstring Game state as a JSON string.
      */
     public State(String JSONstring) {
         jsonObject = new JSONObject(JSONstring);
+        isFinished = false;
     }
 
     /**
      * Update the game state.
      */
     public void update() {
+        // mode timed and time exceeded? -> end
+        if(jsonObject.getString("gameMode").equals("timed")
+            // check if time limit exceeded
+            && (System.currentTimeMillis() / 1000L) - jsonObject.getInt("gameStartTime") >= jsonObject.getInt("gameDuration") ) {
+            isFinished = true;
+            return;
+        }
 
+        // mode notes and x notes played -> end
+
+        // otherwise check new notes, update clock, generate new notes
+        int targetKeys = jsonObject.getInt("targetNumNotes");
+        
     }
 
     /**
@@ -77,7 +95,7 @@ public class State {
      * @return {@code true} if this is a terminal game state.
      */
     public boolean isFinished() {
-        return false; // TODO implement
+        return isFinished;
     }
 
     /**
@@ -88,5 +106,4 @@ public class State {
     public String toReport() {
         return ""; // TODO implement
     }
-
 }
