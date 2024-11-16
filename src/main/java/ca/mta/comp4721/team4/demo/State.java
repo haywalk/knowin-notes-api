@@ -68,7 +68,7 @@ public class State {
         // mode timed and time exceeded? -> end
         if(jsonObject.getString("gameMode").equals("timed")
             // check if time limit exceeded
-            && System.currentTimeMillis() - jsonObject.getInt("gameStartTime") >= jsonObject.getInt("gameDuration") * 60000 ) {
+            && System.currentTimeMillis() - jsonObject.getLong("gameStartTime") >= jsonObject.getLong("gameDuration") * 60000L ) {
             isFinished = true;
             return;
         }
