@@ -125,7 +125,7 @@ public class State {
             // correct key
             else {
                 needNewNote = true; // now we need to generate a new note
-                thisKey.put(3, "c"); // update status
+                thisKey.put(2, "c"); // update status
                 keysPressed.put(i, thisKey); // update key
             }
         }
