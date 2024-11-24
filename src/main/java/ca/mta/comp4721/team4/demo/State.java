@@ -124,7 +124,7 @@ public class State {
         // append a new note if needed
         if(needNewNote) {
             JSONArray newNote = new JSONArray();
-            newNote.put("b4#");
+            newNote.put(NoteGenerator.note());
             newNote.put(System.currentTimeMillis());
             targetNoteTimePairs.put(newNote);
             jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
