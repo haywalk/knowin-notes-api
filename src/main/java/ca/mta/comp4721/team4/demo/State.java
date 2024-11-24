@@ -1,5 +1,8 @@
 package ca.mta.comp4721.team4.demo;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -68,16 +71,65 @@ public class State {
         // mode timed and time exceeded? -> end
         if(jsonObject.getString("gameMode").equals("timed")
             // check if time limit exceeded
-            && (System.currentTimeMillis() / 1000L) - jsonObject.getInt("gameStartTime") >= jsonObject.getInt("gameDuration") ) {
+            && System.currentTimeMillis() - jsonObject.getLong("gameStartTime") >= jsonObject.getLong("gameDuration") * 60000L ) {
             isFinished = true;
             return;
         }
 
         // mode notes and x notes played -> end
+        if(jsonObject.getString("gameMode").equals("timed")
+        && countCorrectKeys() == jsonObject.getInt("notesInGame")) {
+            isFinished = true;
+            return;
+        }
 
-        // otherwise check new notes, update clock, generate new notes
-        int targetKeys = jsonObject.getInt("targetNumNotes");
+        // pull out target (note, time) pair
+        JSONArray targetNoteTimePairs = jsonObject.getJSONArray("targetNoteTimePairs");
+        JSONArray targetNote = targetNoteTimePairs.getJSONArray(targetNoteTimePairs.length() - 1);
+        String targetNoteName = targetNote.getString(0);
+        long targetNoteTime = targetNote.getLong(1);
         
+        // flag for if we need to generate a new note or not
+        boolean needNewNote = false;
+
+        // loop over all keys that have been pressed
+        JSONArray keysPressed = jsonObject.getJSONArray("playedNoteTimePairs");
+        for(int i = 0; i < keysPressed.length(); i++) {
+            // pull out data for this key
+            JSONArray thisKey = keysPressed.getJSONArray(i);
+            String keyName = thisKey.getString(0);
+            long timePressed = thisKey.getLong(1);
+            
+            // previous key press (ignore)
+            if(timePressed < targetNoteTime) {
+                continue;
+            }
+
+            // incorrect key
+            if(!keyName.equals(targetNoteName)) {
+                thisKey.put(2, "i");
+            } 
+            
+            // correct key
+            else {
+                needNewNote = true; // now we need to generate a new note
+                thisKey.put(3, "c"); // update status
+                keysPressed.put(i, thisKey); // update key
+            }
+        }
+
+        // update JSON object
+        jsonObject.put("playedNoteTimePairs", keysPressed); 
+
+        // append a new note if needed
+        if(needNewNote) {
+            JSONArray newNote = new JSONArray();
+            newNote.put(NoteGenerator.note());
+            newNote.put(System.currentTimeMillis());
+            targetNoteTimePairs.put(newNote);
+            jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
+        }
+
     }
 
     /**
@@ -104,6 +156,89 @@ public class State {
      * @return Report as a JSON string.
      */
     public String toReport() {
-        return "{}"; // TODO implement
+        // create empty report
+        JSONObject report = new JSONObject();
+
+        /*
+         * calculate ID
+         */
+        int id = ReportDB.instance().size();
+        report.put("id", id);
+
+        /*
+         * calculate date and time
+         */
+        Date date = new Date();
+        // format date/time
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+        // store in report
+        report.put("date", dateFormatter.format(date));
+        report.put("time", timeFormatter.format(date));
+
+        /*
+         * calculate type
+         */
+        report.put("type", jsonObject.getString("gameMode"));
+
+        /*
+         * calculate accuracy
+         */
+        int numNotesPlayed = jsonObject.getJSONArray("playedNoteTimePairs").length();
+        if(numNotesPlayed > 0) {
+            double accuracy = countCorrectKeys() * 1.0 / numNotesPlayed;
+            int accuracyPercent = (int) (accuracy * 100.0);
+            report.put("accuracy", Integer.toString(accuracyPercent) + "%");    
+        } 
+        // no notes played (avoid dividing by zero)
+        else {
+            report.put("accuracy", "0%");
+        }
+
+
+        /*
+         * calculate num notes
+         */
+        report.put("numNotes", numNotesPlayed);
+
+        /*
+         * calculate chronometer
+         */
+        long startTime = jsonObject.getLong("gameStartTime");
+        long currentTime = jsonObject.getLong("currentTime");
+        long gameDuration = currentTime - startTime / 60000L;
+        report.put("chronometer", gameDuration);
+
+        /*
+         * calculate mistakes
+         */
+        int mistakes = numNotesPlayed - countCorrectKeys();
+        report.put("numMistakes", mistakes);
+
+        // return report string
+        return report.toString();
+    }
+
+    /**
+     * Count how many correct keys have been played.
+     * 
+     * @return How many correct keys have been played.
+     */
+    private int countCorrectKeys() {
+        int count = 0;
+
+        // loop over keys
+        JSONArray keys = jsonObject.getJSONArray("playedNoteTimePairs");
+        for(int i = 0; i < keys.length(); i++) {
+            // pull out key
+            JSONArray thisKey = keys.getJSONArray(i);
+            // pull out status
+            String status = thisKey.getString(2);
+            if(status.equals("c")) {
+                count++;
+            }
+        }
+
+        return count;
     }
 }
