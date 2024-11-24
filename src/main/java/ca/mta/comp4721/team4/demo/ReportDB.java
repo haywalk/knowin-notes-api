@@ -112,4 +112,13 @@ public class ReportDB {
 
         }
     }
+
+    /**
+     * Return the size of the database.
+     * 
+     * @return Size of the database.
+     */
+    public int size() {
+        return jsonArray.length();
+    }
 }
