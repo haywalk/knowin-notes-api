@@ -83,20 +83,27 @@ public class State {
             return;
         }
 
-        // pull out target (note, time) pair
         JSONArray targetNoteTimePairs = jsonObject.getJSONArray("targetNoteTimePairs");
+
+
+        // initial state
+        if(targetNoteTimePairs.length() == 0) {
+            JSONArray newNote = new JSONArray();
+            newNote.put(NoteGenerator.note());
+            newNote.put(System.currentTimeMillis());
+            targetNoteTimePairs.put(newNote);
+            jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
+            return;
+        }
+
+        // pull out target (note, time) pair
         JSONArray targetNote = targetNoteTimePairs.getJSONArray(targetNoteTimePairs.length() - 1);
         String targetNoteName = targetNote.getString(0);
         long targetNoteTime = targetNote.getLong(1);
         
         // flag for if we need to generate a new note or not
         boolean needNewNote = false;
-        
-        // initial state
-        if(targetNoteTimePairs.length() == 0) {
-            needNewNote = true;
-        }
-
+  
         // loop over all keys that have been pressed
         JSONArray keysPressed = jsonObject.getJSONArray("playedNoteTimePairs");
         for(int i = 0; i < keysPressed.length(); i++) {
