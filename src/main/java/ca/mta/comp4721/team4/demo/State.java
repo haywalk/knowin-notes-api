@@ -83,9 +83,53 @@ public class State {
             return;
         }
 
-        // otherwise check new notes, update clock, generate new notes
-        int targetKeys = jsonObject.getInt("targetNumNotes");
+        // pull out target (note, time) pair
+        JSONArray targetNoteTimePairs = jsonObject.getJSONArray("targetNoteTimePairs");
+        JSONArray targetNote = targetNoteTimePairs.getJSONArray(targetNoteTimePairs.length() - 1);
+        String targetNoteName = targetNote.getString(0);
+        long targetNoteTime = targetNote.getLong(1);
         
+        // flag for if we need to generate a new note or not
+        boolean needNewNote = false;
+
+        // loop over all keys that have been pressed
+        JSONArray keysPressed = jsonObject.getJSONArray("playedNoteTimePairs");
+        for(int i = 0; i < keysPressed.length(); i++) {
+            // pull out data for this key
+            JSONArray thisKey = keysPressed.getJSONArray(i);
+            String keyName = thisKey.getString(0);
+            long timePressed = thisKey.getLong(1);
+            
+            // previous key press (ignore)
+            if(timePressed < targetNoteTime) {
+                continue;
+            }
+
+            // incorrect key
+            if(!keyName.equals(targetNoteName)) {
+                thisKey.put(2, "i");
+            } 
+            
+            // correct key
+            else {
+                needNewNote = true; // now we need to generate a new note
+                thisKey.put(3, "c"); // update status
+                keysPressed.put(i, thisKey); // update key
+            }
+        }
+
+        // update JSON object
+        jsonObject.put("playedNoteTimePairs", keysPressed); 
+
+        // append a new note if needed
+        if(needNewNote) {
+            JSONArray newNote = new JSONArray();
+            newNote.put("b4#");
+            newNote.put(System.currentTimeMillis());
+            targetNoteTimePairs.put(newNote);
+            jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
+        }
+
     }
 
     /**
