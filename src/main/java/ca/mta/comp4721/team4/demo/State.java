@@ -91,6 +91,11 @@ public class State {
         
         // flag for if we need to generate a new note or not
         boolean needNewNote = false;
+        
+        // initial state
+        if(targetNoteTimePairs.length() == 0) {
+            needNewNote = true;
+        }
 
         // loop over all keys that have been pressed
         JSONArray keysPressed = jsonObject.getJSONArray("playedNoteTimePairs");
