@@ -18,13 +18,22 @@
 </div>
 
 ## Table of Contents
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-- [Links](#links)
-
-## Getting Started
+- [Team-4](#team-4)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [API Specification](#api-specification)
+  - [Links](#links)
 
 ## Installation
+
+Requires Gradle 8.10.2, Java 17, and `pdflatex` to be installed. Run using `gradle bootRun`.
+
+## API Specification
+
+desc
+: list
+Desc
+: another list
 
 ## Links
 
