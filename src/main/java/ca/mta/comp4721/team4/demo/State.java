@@ -77,8 +77,8 @@ public class State {
         }
 
         // mode notes and x notes played -> end
-        if(jsonObject.getString("gameMode").equals("timed")
-        && countCorrectKeys() == jsonObject.getInt("notesInGame")) {
+        if(jsonObject.getString("gameMode").equals("notes")
+        && countCorrectKeys() >= jsonObject.getInt("notesInGame")) {
             isFinished = true;
             return;
         }
@@ -197,7 +197,12 @@ public class State {
          * calculate accuracy
          */
         int numNotesPlayed = jsonObject.getJSONArray("playedNoteTimePairs").length();
+
         if(numNotesPlayed > 0) {
+
+            
+
+
             double accuracy = countCorrectKeys() * 1.0 / numNotesPlayed;
             int accuracyPercent = (int) (accuracy * 100.0);
             report.put("accuracy", Integer.toString(accuracyPercent) + "%");    
@@ -218,7 +223,7 @@ public class State {
          */
         long startTime = jsonObject.getLong("gameStartTime");
         long currentTime = jsonObject.getLong("currentTime");
-        long gameDuration = currentTime - startTime / 60000L;
+        long gameDuration = (currentTime - startTime) / 60000L;
         report.put("chronometer", gameDuration);
 
         /*

@@ -1,16 +1,12 @@
 package ca.mta.comp4721.team4.demo;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-//import java.util.Iterator;
+import java.io.InputStreamReader;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.json.JSONObject;
-
-//import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Converts JSON reports into PDFs..
@@ -20,6 +16,21 @@ import org.json.JSONObject;
  */
 public class JsonToPdf {
     /**
+     * Save location of the report PDF.
+     */
+    public static final String PDF_PATH = "./tex/report.pdf";
+
+    /**
+     * Location of LaTeX document.
+     */
+    private static final String TEX_FILE = "./tex/report.tex";
+
+    /**
+     * TeX output directory.
+     */
+    private static final String TEX_DIR = "./tex";
+
+    /**
      * Private constructor.
      */
     private JsonToPdf(){}
@@ -28,43 +39,130 @@ public class JsonToPdf {
      * Given a report, save it to a PDF file.
      * 
      * @param report Report as a JSON string.
-     * @param file PDF file.
+     * @return {@code true} if successful.
      */
-    public static void savePDF(String report, File file) {
+    public static boolean savePDF(String report) {
+        // attempt to generate the PDF
         try {
-            PDDocument outputDoc = produceReportPDF(new JSONObject(report));
-            outputDoc.save(file);
-        } catch(IOException e) {
+            String tex = getTex(new JSONObject(report));
+            System.out.println(tex);
+            writeTex(tex);
+            compileTex();
+            return true;
 
+        } 
+        
+        // return false if unsuccessful
+        catch(IOException | InterruptedException e) {
+            System.err.println("error");
+            return false;
         }
     }
 
+    private static String getTex(JSONObject report) {
+        StringBuilder buffer = new StringBuilder();
+
+        // beginning of document
+        buffer.append("\\documentclass{article}\n");
+        buffer.append("\\date{}\n");
+        buffer.append("\\title{Report}\n");
+        buffer.append("\\begin{document}\n");
+        buffer.append("\\maketitle\n");
+
+        buffer.append("\\centering");
+        
+        // create table
+        buffer.append("\\begin{tabular}{|c|c|}\n");
+        buffer.append("\\hline\n");
+        
+        buffer.append("Date & ");
+        buffer.append(report.getString("date"));
+        buffer.append("\\\\\n");
+        buffer.append("\\hline\n");
+
+
+        buffer.append("Time & ");
+        buffer.append(report.getString("time"));
+        buffer.append("\\\\\n");
+        buffer.append("\\hline\n");
+
+        buffer.append("Session ID & ");
+        buffer.append(report.getInt("id"));
+        buffer.append("\\\\\n");
+        buffer.append("\\hline\n");
+
+        buffer.append("Practice Type & ");
+        buffer.append(report.getString("type"));
+        buffer.append("\\\\\n");
+        buffer.append("\\hline\n");
+
+        buffer.append("Accuracy & ");
+        buffer.append(report.getString("accuracy").replace("%", ""));
+        buffer.append("\\%");
+        buffer.append("\\\\\n");
+        buffer.append("\\hline\n");
+
+        buffer.append("Timer & ");
+        buffer.append(report.getString("chronometer"));
+        buffer.append("\\\\\n");
+        buffer.append("\\hline\n");
+
+        buffer.append("Number of Notes & ");
+        buffer.append(report.getInt("numNotes"));
+        buffer.append("\\\\\n");
+        buffer.append("\\hline\n");
+
+        buffer.append("Mistakes & ");
+        buffer.append(report.getInt("numMistakes"));
+        buffer.append("\\\\\n");
+        buffer.append("\\hline\n");
+
+        buffer.append("\\end{tabular}");
+        // end of document
+        buffer.append("\\end{document}\n");
+        
+
+        return buffer.toString();
+    }
+
     /**
-     * Convert a report into a PDDocument object.
+     * Generate a LaTeX document.
      * 
-     * @param report JSON report.
-     * @return Report as PDDocument.
-     * @throws IOException If fails to write.
+     * @param tex TeX.
+     * @throws IOException 
      */
-    public static PDDocument produceReportPDF(JSONObject report) throws IOException{
-        //create a pdf document to put the results in
-        PDDocument outputDoc = new PDDocument();
-        PDPage page = new PDPage();
-        outputDoc.addPage(page);
+    private static void writeTex(String tex) throws IOException {
+        File texFile = new File(TEX_FILE);
+        texFile.delete();
+        FileWriter fileWriter = new FileWriter(texFile);
+        fileWriter.write(tex);
+        fileWriter.flush();
+        fileWriter.close();
+    }
 
-        //Exception thrown by PDPageContentStream to be handled elsewhere
-        PDPageContentStream contentStream = new PDPageContentStream(outputDoc, page); 
-        contentStream.setFont(PDType1Font.TIMES_BOLD, 12); //for some reason, all font names throw unresolved errors... this will probably need to be fixed lol
-        contentStream.beginText();
-        contentStream.newLineAtOffset(50, 700);
+    /**
+     * Compile LaTeX document.
+     * 
+     * @throws InterruptedException If process is interrupted.
+     * @throws IOException If IO fails.
+     */
+    public static void compileTex() throws InterruptedException, IOException {       
+        // invoke pdflatex
+        Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -output-directory=" + TEX_DIR + " " + TEX_FILE);
+        
+        // capture standard out
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-        for(String field : JSONObject.getNames(report)) {
-            contentStream.showText(field + ": " + report.get(field).toString());
-            contentStream.newLineAtOffset(0, -15);
-        }
+        // // print output if we get an error exit status
+        // if(process.waitFor() != 0) {
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+//        }
+    }
 
-        contentStream.endText();
-        contentStream.close();
-        return outputDoc;
+    public static void main(String[] args) throws InterruptedException, IOException {
+        compileTex();
     }
 }
