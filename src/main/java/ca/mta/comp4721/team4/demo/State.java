@@ -77,26 +77,33 @@ public class State {
         }
 
         // mode notes and x notes played -> end
-        if(jsonObject.getString("gameMode").equals("timed")
-        && countCorrectKeys() == jsonObject.getInt("notesInGame")) {
+        if(jsonObject.getString("gameMode").equals("notes")
+        && countCorrectKeys() >= jsonObject.getInt("notesInGame")) {
             isFinished = true;
             return;
         }
 
-        // pull out target (note, time) pair
         JSONArray targetNoteTimePairs = jsonObject.getJSONArray("targetNoteTimePairs");
+
+
+        // initial state
+        if(targetNoteTimePairs.length() == 0) {
+            JSONArray newNote = new JSONArray();
+            newNote.put(NoteGenerator.note());
+            newNote.put(System.currentTimeMillis());
+            targetNoteTimePairs.put(newNote);
+            jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
+            return;
+        }
+
+        // pull out target (note, time) pair
         JSONArray targetNote = targetNoteTimePairs.getJSONArray(targetNoteTimePairs.length() - 1);
         String targetNoteName = targetNote.getString(0);
         long targetNoteTime = targetNote.getLong(1);
         
         // flag for if we need to generate a new note or not
         boolean needNewNote = false;
-        
-        // initial state
-        if(targetNoteTimePairs.length() == 0) {
-            needNewNote = true;
-        }
-
+  
         // loop over all keys that have been pressed
         JSONArray keysPressed = jsonObject.getJSONArray("playedNoteTimePairs");
         for(int i = 0; i < keysPressed.length(); i++) {
@@ -118,7 +125,7 @@ public class State {
             // correct key
             else {
                 needNewNote = true; // now we need to generate a new note
-                thisKey.put(3, "c"); // update status
+                thisKey.put(2, "c"); // update status
                 keysPressed.put(i, thisKey); // update key
             }
         }
@@ -190,7 +197,12 @@ public class State {
          * calculate accuracy
          */
         int numNotesPlayed = jsonObject.getJSONArray("playedNoteTimePairs").length();
+
         if(numNotesPlayed > 0) {
+
+            
+
+
             double accuracy = countCorrectKeys() * 1.0 / numNotesPlayed;
             int accuracyPercent = (int) (accuracy * 100.0);
             report.put("accuracy", Integer.toString(accuracyPercent) + "%");    
@@ -211,7 +223,7 @@ public class State {
          */
         long startTime = jsonObject.getLong("gameStartTime");
         long currentTime = jsonObject.getLong("currentTime");
-        long gameDuration = currentTime - startTime / 60000L;
+        long gameDuration = (currentTime - startTime) / 60000L;
         report.put("chronometer", gameDuration);
 
         /*

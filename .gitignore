@@ -36,3 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 report.pdf
+tex/report.log
+tex/report.tex

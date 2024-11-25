@@ -74,8 +74,9 @@ public class KnowinNotesAPI {
 		state.update(); // update State
 
 		if(state.isFinished()) {
-			ReportDB.instance().addReport(state.toReport()); // store report in database
-			return "REPORT" + state.toReport();
+			String report = state.toReport();
+			ReportDB.instance().addReport(report); // store report in database
+			return "REPORT" + report;
 		}
 
 		// return to JSON
@@ -98,14 +99,15 @@ public class KnowinNotesAPI {
 	@GetMapping("/api/GENERATE_PDF")
 	public ResponseEntity<byte[]> generatePDF(@RequestParam(value = "id", defaultValue = "") String id) throws IOException{
 		// open file
-		File output = new File("report.pdf");
+		//File output = new File("report.pdf");
 		
 		// produce pdf
 		String report = ReportDB.instance().getReportByID(Integer.parseInt(id));
-		JsonToPdf.savePDF(report, output);
+		//JsonToPdf.savePDF(report, output);
+		JsonToPdf.savePDF(report);
 
 		// get pdf as array of bytes
-		byte[] contents = FileUtils.readFileToByteArray(output);
+		byte[] contents = FileUtils.readFileToByteArray(new File(JsonToPdf.PDF_PATH));
 
 		// lines from here down are based on
 		// https://stackoverflow.com/questions/16652760/return-generated-pdf-using-spring-mvc
