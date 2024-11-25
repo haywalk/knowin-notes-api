@@ -64,8 +64,9 @@ public class JsonToPdf {
 
         // beginning of document
         buffer.append("\\documentclass{article}\n");
+        buffer.append("\\usepackage{txfonts}");
         buffer.append("\\date{}\n");
-        buffer.append("\\title{Report}\n");
+        buffer.append("\\title{Knowin' Notes: Report}\n");
         buffer.append("\\begin{document}\n");
         buffer.append("\\maketitle\n");
 
@@ -117,10 +118,17 @@ public class JsonToPdf {
         buffer.append("\\\\\n");
         buffer.append("\\hline\n");
 
-        buffer.append("\\end{tabular}");
+        buffer.append("\\end{tabular}\n");
+
+        buffer.append("\n");
+        buffer.append("\\vspace{1.5in}");
+        buffer.append("\\centering");
+        buffer.append("\\textsc{Knowin' Notes} is a product of the \\textsc{4721 Dream Team}.\n\n");
+        buffer.append("\\textcopyright \\ 2024 \\textsc{Tanner Altenkirk}, \\textsc{Anthony Arseneau}, \\textsc{Sawyer Stanley}, and \\textsc{Hayden Walker}.");
+
         // end of document
         buffer.append("\\end{document}\n");
-        
+
 
         return buffer.toString();
     }
