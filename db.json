@@ -20,6 +20,16 @@
         "numMistakes": 5
     },
     {
+        "id": 2,
+        "date": "2024-10-28",
+        "time": "10:11",
+        "type": "Number of notes",
+        "accuracy": "75%",
+        "chronometer": "20:00",
+        "numNotes": 20,
+        "numMistakes": 5
+    },
+    {
         "id": 3,
         "date": "2024-10-29",
         "time": "12:10",
