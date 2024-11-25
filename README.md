@@ -30,10 +30,19 @@ Requires Gradle 8.10.2, Java 17, and `pdflatex` to be installed. Run using `grad
 
 ## API Specification
 
-desc
-: list
-Desc
-: another list
+<dl>
+  <dt>/api/LIST_REPORTS</dt>
+  <dd>Returns a JSON array containing all reports in the database as JSON objects.</dd>   
+
+  <dt>/api/GET_REPORT?id=<code>id</code></dt>
+  <dd>Return the report with ID <code>id</code> as a JSON object.</dd>  
+
+  <dt>/api/GET_STATE?old=<code>state</code></dt>
+  <dd>Given a JSON representation of a state encoded in base-64, return either an updated state as plain JSON or a report as plain JSON if the game has ended.</dd>   
+  
+  <dt>/api/GENERATE_PDF?id=<code>id</code></dt>
+  <dd>Return a PDF document containing the report with ID <code>id</code>.</dd>  
+</dl>
 
 ## Links
 
