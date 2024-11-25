@@ -223,8 +223,21 @@ public class State {
          */
         long startTime = jsonObject.getLong("gameStartTime");
         long currentTime = jsonObject.getLong("currentTime");
-        long gameDuration = (currentTime - startTime) / 60000L;
-        report.put("chronometer", gameDuration);
+        long gameDuration = (currentTime - startTime) / 1000L; // in seconds
+
+        // format minutes and seconds
+        String minutes = Integer.toString((int) (gameDuration / 60));
+        
+        int secondsInt = (int) gameDuration % 60;
+        String seconds = "";
+        // pad with zero
+        if(secondsInt < 10) {
+            seconds += "0";
+        } 
+
+        seconds += Integer.toString(secondsInt);
+        report.put("chronometer", minutes + ":" + seconds);
+
 
         /*
          * calculate mistakes
