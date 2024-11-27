@@ -245,6 +245,13 @@ public class State {
         int mistakes = numNotesPlayed - countCorrectKeys();
         report.put("numMistakes", mistakes);
 
+        /*
+         * add clef
+         */
+        report.put("clef", jsonObject.getString("clef"));
+
+
+
         // return report string
         return report.toString();
     }
