@@ -86,6 +86,11 @@ public class State {
 
         JSONArray targetNoteTimePairs = jsonObject.getJSONArray("targetNoteTimePairs");
 
+        // backwards compatibility fix: add noteAccuracy field if absent
+        if(!jsonObject.has("noteAccuracy")) {
+            jsonObject.put("noteAccuracy", new JSONObject());
+        }
+
 
         // initial state
         if(targetNoteTimePairs.length() == 0) {
@@ -203,9 +208,6 @@ public class State {
         int numNotesPlayed = jsonObject.getJSONArray("playedNoteTimePairs").length();
 
         if(numNotesPlayed > 0) {
-
-            
-
 
             double accuracy = countCorrectKeys() * 1.0 / numNotesPlayed;
             int accuracyPercent = (int) (accuracy * 100.0);
