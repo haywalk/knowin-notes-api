@@ -260,6 +260,16 @@ public class State {
          */
         report.put("noteAccuracy", jsonObject.getJSONObject("noteAccuracy"));
 
+        /*
+         * Add rest of settings
+         */
+        report.put("gameDuration", jsonObject.getInt("gameDuration"));
+        report.put("notesInGame", jsonObject.getInt("notesInGame"));
+        report.put("timePerNote", jsonObject.getInt("timePerNote"));
+        report.put("noteType", jsonObject.getString("noteTypes"));
+        report.put("targetNumNotes", jsonObject.getInt("targetNumNotes"));
+
+
 
         // return report string
         return report.toString();
