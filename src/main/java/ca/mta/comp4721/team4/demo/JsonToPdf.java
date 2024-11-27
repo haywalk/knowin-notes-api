@@ -71,6 +71,9 @@ public class JsonToPdf {
         buffer.append("\\maketitle\n");
 
         buffer.append("\\centering");
+
+        //we want to put the image here!
+        // buffer.append("\\includegraphics{report_image}");
         
         // create table
         buffer.append("\\begin{tabular}{|c|c|}\n");
