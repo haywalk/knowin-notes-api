@@ -266,7 +266,7 @@ public class State {
         report.put("gameDuration", jsonObject.getInt("gameDuration"));
         report.put("notesInGame", jsonObject.getInt("notesInGame"));
         report.put("timePerNote", jsonObject.getInt("timePerNote"));
-        report.put("noteType", jsonObject.getString("noteTypes"));
+        report.put("noteType", jsonObject.getString("noteType"));
         report.put("targetNumNotes", jsonObject.getInt("targetNumNotes"));
 
 
