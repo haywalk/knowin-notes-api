@@ -22,6 +22,7 @@ import org.json.JSONObject;
 //     "targetNoteTimePairs": [],
 //     "targetNumNotes": 1,
 //     "playedNoteTimePairs": []
+//      noteAccuracy = { "note": [correct, asked], ....}
 // }
 
 // REPORT JSON FORMAT 
@@ -126,6 +127,7 @@ public class State {
             else {
                 needNewNote = true; // now we need to generate a new note
                 thisKey.put(2, "c"); // update status
+                updateNotesCorrect(targetNoteName);
                 keysPressed.put(i, thisKey); // update key
             }
         }
@@ -136,7 +138,9 @@ public class State {
         // append a new note if needed
         if(needNewNote) {
             JSONArray newNote = new JSONArray();
-            newNote.put(NoteGenerator.note());
+            String noteName = NoteGenerator.note(); // TODO bass clef
+            updateNotesAsked(noteName);
+            newNote.put(noteName);
             newNote.put(System.currentTimeMillis());
             targetNoteTimePairs.put(newNote);
             jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
@@ -227,7 +231,6 @@ public class State {
 
         // format minutes and seconds
         String minutes = Integer.toString((int) (gameDuration / 60));
-        
         int secondsInt = (int) gameDuration % 60;
         String seconds = "";
         // pad with zero
@@ -250,6 +253,10 @@ public class State {
          */
         report.put("clef", jsonObject.getString("clef"));
 
+        /*
+         * Add accuracy
+         */
+        report.put("noteAccuracy", jsonObject.getJSONObject("noteAccuracy"));
 
 
         // return report string
@@ -277,5 +284,51 @@ public class State {
         }
 
         return count;
+    }
+
+    /**
+     * Increment the number of times a note has been asked for.
+     * 
+     * @param noteName Name of note.
+     */
+    private void updateNotesAsked(String noteName) {
+        updateAccuracyField(noteName, 1);
+    }
+
+    /**
+     * Increment the number of times a note has been played correctly.
+     * 
+     * @param noteName Name of note.
+     */
+    private void updateNotesCorrect(String noteName) {
+        updateAccuracyField(noteName, 0);
+    }
+
+    /**
+     * Increment the ith index of a note's accuracy array.
+     * 
+     * @param noteName Name of note.
+     * @param index Index to increment.
+     */
+    private void updateAccuracyField(String noteName, int index) {
+        // pull out accuracy list
+        JSONObject accuracy = jsonObject.getJSONObject("noteAccuracy");
+
+        // add new entry if needed
+        if(!accuracy.has(noteName)) {
+            JSONArray acc = new JSONArray();
+            acc.put(0);
+            acc.put(0);
+            accuracy.put(noteName, acc);
+        }
+
+        // update times asked
+        JSONArray thisNoteAccuracy = accuracy.getJSONArray(noteName);
+        int timesAsked = thisNoteAccuracy.getInt(index) + 1;
+        thisNoteAccuracy.put(index, timesAsked);
+        
+        // store
+        accuracy.put(noteName, thisNoteAccuracy);
+        jsonObject.put("noteAccuracy", accuracy);
     }
 }
