@@ -64,16 +64,24 @@ public class JsonToPdf {
 
         // beginning of document
         buffer.append("\\documentclass{article}\n");
-        buffer.append("\\usepackage{txfonts}");
+        buffer.append("\\usepackage{txfonts, musicography, musixtex, xcolor}");
+        buffer.append("\\xdefinecolor{red-undar}{RGB}{179,35,79}");
         buffer.append("\\date{}\n");
         buffer.append("\\title{Knowin' Notes: Report}\n");
         buffer.append("\\begin{document}\n");
         buffer.append("\\maketitle\n");
-
         buffer.append("\\centering");
 
-        //we want to put the image here!
-        // buffer.append("\\includegraphics{report_image}");
+        // create accuracy visual
+        buffer.append("\\begin{music}"); 
+        buffer.append("\\instrumentnumber{1}"); 
+        buffer.append("\\setname1{Accuracy}"); 
+        buffer.append("\\setstaffs1{1}");
+        buffer.append("\\setclef{1}{0}");
+        buffer.append("\\startextract"); 
+        buffer.append("\\Notes {\color{gray} \qa c} {\color{red} \qa d} {\color{yellow} \qa e} {\color{green} \qa f} {\color{gray} \qa g} {\color{red} \qa h} {\color{yellow} \qa i} {\color{green} \qa j} {\color{gray} \qa k} {\color{red} \qa l} {\color{yellow} \qa m} {\color{green} \qa n} \en \endpiece");
+        buffer.append("\\zendextract"); 
+        buffer.append("\\end{music}");
         
         // create table
         buffer.append("\\begin{tabular}{|c|c|}\n");
