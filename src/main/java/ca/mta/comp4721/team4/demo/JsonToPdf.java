@@ -84,7 +84,6 @@ public class JsonToPdf {
         // create accuracy visual
         buffer.append("\\begin{music}"); 
         buffer.append("\\instrumentnumber{1}"); 
-        buffer.append("\\setname1{Accuracy}"); 
         buffer.append("\\setstaffs1{1}");
         buffer.append("\\setclef{1}{" + clef + "}");
         buffer.append("\\startextract"); 
@@ -216,7 +215,6 @@ public class JsonToPdf {
         HashMap<String, String> allNotes = new HashMap<>(); 
         HashMap<String, String> noteConversions = rightDict();
         JSONObject noteAccuracy = report.getJSONObject("noteAccuracy");
-       
         for(String key : noteAccuracy.keySet()){
             allNotes.put(noteConversions.get(key), noteColor(noteAccuracy.getJSONArray(key)));
         }
