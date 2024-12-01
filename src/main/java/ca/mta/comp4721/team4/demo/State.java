@@ -95,7 +95,7 @@ public class State {
         // initial state
         if(targetNoteTimePairs.length() == 0) {
             JSONArray newNote = new JSONArray();
-            newNote.put(NoteGenerator.note());
+            newNote.put(NoteGenerator.note(jsonObject.getString("clef")));
             newNote.put(System.currentTimeMillis());
             targetNoteTimePairs.put(newNote);
             jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
@@ -143,7 +143,7 @@ public class State {
         // append a new note if needed
         if(needNewNote) {
             JSONArray newNote = new JSONArray();
-            String noteName = NoteGenerator.note(); // TODO bass clef
+            String noteName = NoteGenerator.note(jsonObject.getString("clef"));
             updateNotesAsked(noteName);
             newNote.put(noteName);
             newNote.put(System.currentTimeMillis());
@@ -259,6 +259,16 @@ public class State {
          * Add accuracy
          */
         report.put("noteAccuracy", jsonObject.getJSONObject("noteAccuracy"));
+
+        /*
+         * Add rest of settings
+         */
+        report.put("gameDuration", jsonObject.getInt("gameDuration"));
+        report.put("notesInGame", jsonObject.getInt("notesInGame"));
+        report.put("timePerNote", jsonObject.getInt("timePerNote"));
+        report.put("noteType", jsonObject.getString("noteType"));
+        report.put("targetNumNotes", jsonObject.getInt("targetNumNotes"));
+
 
 
         // return report string
