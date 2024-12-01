@@ -126,6 +126,7 @@ public class State {
             // incorrect key
             if(!keyName.equals(targetNoteName)) {
                 thisKey.put(2, "i");
+                updateNotesAsked(targetNoteName);
             } 
             
             // correct key
