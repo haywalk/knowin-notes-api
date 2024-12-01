@@ -5,13 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,45 +35,7 @@ public class JsonToPdf {
     /**
      * Clef integer.
      */
-    private String clef = "";
-
-    /**
-     * Conversion list for treble clef note names.
-     */
-    private static final Dictionary<String, String> noteConversionsTreble= new Hashtable<>() {{
-        put("c4", "c");
-        put("d4", "d");
-        put("e4", "e");
-        put("f4", "f");
-        put("g4", "g");
-        put("a5", "h");
-        put("b5", "i");
-        put("c5", "j");
-        put("d5", "k");
-        put("e5", "l");
-        put("f5", "m");
-        put("g5", "n");
-        put("a6", "o");
-    }};
-
-    /**
-     * Conversion list for bass clef note names.
-     */
-    private static final Dictionary<String, String> noteConversionsBass= new Hashtable<>() {{
-        put("e2", "E");
-        put("f2", "F");
-        put("g2", "G");
-        put("a3", "H");
-        put("b3", "I");
-        put("c3", "J");
-        put("d3", "K");
-        put("e3", "L");
-        put("f3", "M");
-        put("g3", "N");
-        put("a4", "O");
-        put("b4", "P");
-        put("c4", "Q");
-    }};
+    private static String clef = "";
 
     /**
      * Private constructor.
@@ -218,7 +174,7 @@ public class JsonToPdf {
      * @throws InterruptedException If process is interrupted.
      * @throws IOException If IO fails.
      */
-    public static void compileTex() throws InterruptedException, IOException {       
+    private static void compileTex() throws InterruptedException, IOException {       
         // invoke pdflatex
         Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -output-directory=" + TEX_DIR + " " + TEX_FILE);
         
@@ -238,7 +194,7 @@ public class JsonToPdf {
      * Get clef integer
      * @param report the reprot
      */
-    private void clefFinder(JsonObject report){
+    private static void clefFinder(JSONObject report){
         String clefString = report.getString("clef");
         if(clefString == "treble"){
             clef = "0";
@@ -246,6 +202,7 @@ public class JsonToPdf {
         else{
             clef = "6";
         }
+        System.out.println(clef);
     }
 
     /**
@@ -255,14 +212,12 @@ public class JsonToPdf {
      * @throws InterruptedException If process is interrupted.
      * @throws IOException If IO fails.
      */
-    private Dictionary<String, String> noteStrings(JsonObject report){
-        Dictionary<String, String> allNotes = new Hashtable<>(); 
-        Dictionary<String, String> noteConversions = rightDict();
-        JsonObject noteAccuracy = report.getJSONObject("noteAccuracy");
-        Iterator<String> keys = noteAccuracy.keys();
-
-        while(keys.hasNext()){
-            String key = keys.next();
+    private static HashMap<String, String> noteStrings(JSONObject report){
+        HashMap<String, String> allNotes = new HashMap<>(); 
+        HashMap<String, String> noteConversions = rightDict();
+        JSONObject noteAccuracy = report.getJSONObject("noteAccuracy");
+       
+        for(String key : noteAccuracy.keySet()){
             allNotes.put(noteConversions.get(key), noteColor(noteAccuracy.getJSONArray(key)));
         }
         return allNotes;
@@ -274,7 +229,7 @@ public class JsonToPdf {
      * @throws InterruptedException
      * @throws IOException
      */
-    private String noteColor(JSONArray noteStats){
+    private static String noteColor(JSONArray noteStats){
         float ratio = (float)noteStats.getInt(0) / (float)noteStats.getInt(1);
         if(ratio >= 0.9){
             return "green";
@@ -291,31 +246,55 @@ public class JsonToPdf {
      * @throws InterruptedException
      * @throws IOException
      */
-    private Dictionary<String, String> addMissedNotes(Dictionary<String, String> allNotes){
-        Dictionary<String, String> noteConversions = rightDict();
-        Enumeration<String> keysList = noteConversions.keys();
-        while(keysList.hasMoreElements()){
-            String key = keysList.nextElement();
-            if(allNotes.get(key) == null){
-                allNotes.put(key, "gray");
+    private static HashMap<String, String> addMissedNotes(HashMap<String, String> allNotes){
+        HashMap<String, String> noteConversions = rightDict();
+        for(String key : noteConversions.keySet()){
+            if(allNotes.get(noteConversions.get(key)) == null){
+                allNotes.put(noteConversions.get(key), "gray");
             }
         }
         return allNotes;
     }
 
     /**
-     * Return the proper note conversion table for the given clef.
+     * Build the proper note conversion table for the given clef.
      * @param none
      * @throws InterruptedException
      * @throws IOException
      */
-    private Dictionary<String, String> rightDict(){
-        Dictionary<String, String> noteConversions = new Hashtable<>();
+    private static HashMap<String, String> rightDict(){
+        HashMap<String, String> noteConversions = new HashMap<>();
         if(clef == "0"){
-            noteConversions = noteConversionsTreble;
+            //build treble conversions here
+            noteConversions.put("c4", "c");
+            noteConversions.put("d4", "d");
+            noteConversions.put("e4", "e");
+            noteConversions.put("f4", "f");
+            noteConversions.put("g4", "g");
+            noteConversions.put("a5", "h");
+            noteConversions.put("b5", "i");
+            noteConversions.put("c5", "j");
+            noteConversions.put("d5", "k");
+            noteConversions.put("e5", "l");
+            noteConversions.put("f5", "m");
+            noteConversions.put("g5", "n");
+            noteConversions.put("a6", "o");
         }
         else{
-            noteConversions = noteConversionsBass;
+            //build base conversions here
+            noteConversions.put("e2", "E");
+            noteConversions.put("f2", "F");
+            noteConversions.put("g2", "G");
+            noteConversions.put("a3", "H");
+            noteConversions.put("b3", "I");
+            noteConversions.put("c3", "J");
+            noteConversions.put("d3", "K");
+            noteConversions.put("e3", "L");
+            noteConversions.put("f3", "M");
+            noteConversions.put("g3", "N");
+            noteConversions.put("a4", "O");
+            noteConversions.put("b4", "P");
+            noteConversions.put("c4", "Q");
         }
         return noteConversions;
     }
@@ -327,20 +306,13 @@ public class JsonToPdf {
      * @throws InterruptedException
      * @throws IOException
      */
-    private String texString(JSONObject report){
-        Dictionary<String, String> notesDict = addMissedNotes(noteStrings(report));
-        String outputString = "";
+    private static String texString(JSONObject report){
+        HashMap<String, String> notesDict = addMissedNotes(noteStrings(report));
         if(clef == "0"){
-            outputString = "\\Notes {\color{" + notesDict.get("c") + "} \qa c} {\color{" + notesDict.get("d") + "} \qa d} {\color{" + notesDict.get("e") + "} \qa e} {\color{" + notesDict.get("f") + "} \qa f} {\color{" + notesDict.get("g") + "} \qa g} {\color{" + notesDict.get("h") + "} \qa h} {\color{" + notesDict.get("i") + "} \qa i} {\color{" + notesDict.get("j") + "} \qa j} {\color{" + notesDict.get("k") + "} \qa k} {\color{" + notesDict.get("l") + "} \qa l} {\color{" + notesDict.get("m") + "} \qa m} {\color{" + notesDict.get("n") + "} \qa n} {\color{" + notesDict.get("o") + "} \qa o} \en \endpiece";
+            return "\\Notes {\\color{" + notesDict.get("c") + "} \\qa c} {\\color{" + notesDict.get("d") + "} \\qa d} {\\color{" + notesDict.get("e") + "} \\qa e} {\\color{" + notesDict.get("f") + "} \\qa f} {\\color{" + notesDict.get("g") + "} \\qa g} {\\color{" + notesDict.get("h") + "} \\qa h} {\\color{" + notesDict.get("i") + "} \\qa i} {\\color{" + notesDict.get("j") + "} \\qa j} {\\color{" + notesDict.get("k") + "} \\qa k} {\\color{" + notesDict.get("l") + "} \\qa l} {\\color{" + notesDict.get("m") + "} \\qa m} {\\color{" + notesDict.get("n") + "} \\qa n} {\\color{" + notesDict.get("o") + "} \\qa o} \\en \\endpiece";
         }
-        else{
-            outputString = "\\Notes {\color{" + notesDict.get("E") + "} \qa E} {\color{" + notesDict.get("F") + "} \qa F} {\color{" + notesDict.get("G") + "} \qa G} {\color{" + notesDict.get("H") + "} \qa H} {\color{" + notesDict.get("I") + "} \qa I} {\color{" + notesDict.get("J") + "} \qa J} {\color{" + notesDict.get("K") + "} \qa K} {\color{" + notesDict.get("L") + "} \qa L} {\color{" + notesDict.get("M") + "} \qa M} {\color{" + notesDict.get("N") + "} \qa N} {\color{" + notesDict.get("O") + "} \qa O} {\color{" + notesDict.get("P") + "} \qa P} {\color{" + notesDict.get("Q") + "} \qa Q} \en \endpiece";
-        }
-        return outputString;
+        return "\\Notes {\\color{" + notesDict.get("E") + "} \\qa E} {\\color{" + notesDict.get("F") + "} \\qa F} {\\color{" + notesDict.get("G") + "} \\qa G} {\\color{" + notesDict.get("H") + "} \\qa H} {\\color{" + notesDict.get("I") + "} \\qa I} {\\color{" + notesDict.get("J") + "} \\qa J} {\\color{" + notesDict.get("K") + "} \\qa K} {\\color{" + notesDict.get("L") + "} \\qa L} {\\color{" + notesDict.get("M") + "} \\qa M} {\\color{" + notesDict.get("N") + "} \\qa N} {\\color{" + notesDict.get("O") + "} \\qa O} {\\color{" + notesDict.get("P") + "} \\qa P} {\\color{" + notesDict.get("Q") + "} \\qa Q} \\en \\endpiece";
     }
-
-
-
 
     public static void main(String[] args) throws InterruptedException, IOException {
         compileTex();
