@@ -156,7 +156,7 @@ public class JsonToPdf {
      */
     public static void compileTex() throws InterruptedException, IOException {       
         // invoke pdflatex
-        Process process = Runtime.getRuntime().exec("/usr/bin/pdflatex -output-directory=" + TEX_DIR + " " + TEX_FILE);
+        Process process = Runtime.getRuntime().exec("pdflatex -output-directory=" + TEX_DIR + " " + TEX_FILE);
         
         // capture standard out
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
