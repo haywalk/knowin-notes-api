@@ -22,6 +22,7 @@ import org.json.JSONObject;
 //     "targetNoteTimePairs": [],
 //     "targetNumNotes": 1,
 //     "playedNoteTimePairs": []
+//      noteAccuracy = { "note": [correct, asked], ....}
 // }
 
 // REPORT JSON FORMAT 
@@ -77,26 +78,38 @@ public class State {
         }
 
         // mode notes and x notes played -> end
-        if(jsonObject.getString("gameMode").equals("timed")
-        && countCorrectKeys() == jsonObject.getInt("notesInGame")) {
+        if(jsonObject.getString("gameMode").equals("notes")
+        && countCorrectKeys() >= jsonObject.getInt("notesInGame")) {
             isFinished = true;
             return;
         }
 
-        // pull out target (note, time) pair
         JSONArray targetNoteTimePairs = jsonObject.getJSONArray("targetNoteTimePairs");
+
+        // backwards compatibility fix: add noteAccuracy field if absent
+        if(!jsonObject.has("noteAccuracy")) {
+            jsonObject.put("noteAccuracy", new JSONObject());
+        }
+
+
+        // initial state
+        if(targetNoteTimePairs.length() == 0) {
+            JSONArray newNote = new JSONArray();
+            newNote.put(NoteGenerator.note(jsonObject.getString("clef")));
+            newNote.put(System.currentTimeMillis());
+            targetNoteTimePairs.put(newNote);
+            jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
+            return;
+        }
+
+        // pull out target (note, time) pair
         JSONArray targetNote = targetNoteTimePairs.getJSONArray(targetNoteTimePairs.length() - 1);
         String targetNoteName = targetNote.getString(0);
         long targetNoteTime = targetNote.getLong(1);
         
         // flag for if we need to generate a new note or not
         boolean needNewNote = false;
-        
-        // initial state
-        if(targetNoteTimePairs.length() == 0) {
-            needNewNote = true;
-        }
-
+  
         // loop over all keys that have been pressed
         JSONArray keysPressed = jsonObject.getJSONArray("playedNoteTimePairs");
         for(int i = 0; i < keysPressed.length(); i++) {
@@ -113,12 +126,14 @@ public class State {
             // incorrect key
             if(!keyName.equals(targetNoteName)) {
                 thisKey.put(2, "i");
+                updateNotesAsked(targetNoteName);
             } 
             
             // correct key
             else {
                 needNewNote = true; // now we need to generate a new note
-                thisKey.put(3, "c"); // update status
+                thisKey.put(2, "c"); // update status
+                updateNotesCorrect(targetNoteName);
                 keysPressed.put(i, thisKey); // update key
             }
         }
@@ -129,7 +144,9 @@ public class State {
         // append a new note if needed
         if(needNewNote) {
             JSONArray newNote = new JSONArray();
-            newNote.put(NoteGenerator.note());
+            String noteName = NoteGenerator.note(jsonObject.getString("clef"));
+            updateNotesAsked(noteName);
+            newNote.put(noteName);
             newNote.put(System.currentTimeMillis());
             targetNoteTimePairs.put(newNote);
             jsonObject.put("targetNoteTimePairs", targetNoteTimePairs);
@@ -190,7 +207,9 @@ public class State {
          * calculate accuracy
          */
         int numNotesPlayed = jsonObject.getJSONArray("playedNoteTimePairs").length();
+
         if(numNotesPlayed > 0) {
+
             double accuracy = countCorrectKeys() * 1.0 / numNotesPlayed;
             int accuracyPercent = (int) (accuracy * 100.0);
             report.put("accuracy", Integer.toString(accuracyPercent) + "%");    
@@ -211,14 +230,47 @@ public class State {
          */
         long startTime = jsonObject.getLong("gameStartTime");
         long currentTime = jsonObject.getLong("currentTime");
-        long gameDuration = currentTime - startTime / 60000L;
-        report.put("chronometer", gameDuration);
+        long gameDuration = (currentTime - startTime) / 1000L; // in seconds
+
+        // format minutes and seconds
+        String minutes = Integer.toString((int) (gameDuration / 60));
+        int secondsInt = (int) gameDuration % 60;
+        String seconds = "";
+        // pad with zero
+        if(secondsInt < 10) {
+            seconds += "0";
+        } 
+
+        seconds += Integer.toString(secondsInt);
+        report.put("chronometer", minutes + ":" + seconds);
+
 
         /*
          * calculate mistakes
          */
         int mistakes = numNotesPlayed - countCorrectKeys();
         report.put("numMistakes", mistakes);
+
+        /*
+         * add clef
+         */
+        report.put("clef", jsonObject.getString("clef"));
+
+        /*
+         * Add accuracy
+         */
+        report.put("noteAccuracy", jsonObject.getJSONObject("noteAccuracy"));
+
+        /*
+         * Add rest of settings
+         */
+        report.put("gameDuration", jsonObject.getInt("gameDuration"));
+        report.put("notesInGame", jsonObject.getInt("notesInGame"));
+        report.put("timePerNote", jsonObject.getInt("timePerNote"));
+        report.put("noteType", jsonObject.getString("noteType"));
+        report.put("targetNumNotes", jsonObject.getInt("targetNumNotes"));
+
+
 
         // return report string
         return report.toString();
@@ -245,5 +297,51 @@ public class State {
         }
 
         return count;
+    }
+
+    /**
+     * Increment the number of times a note has been asked for.
+     * 
+     * @param noteName Name of note.
+     */
+    private void updateNotesAsked(String noteName) {
+        updateAccuracyField(noteName, 1);
+    }
+
+    /**
+     * Increment the number of times a note has been played correctly.
+     * 
+     * @param noteName Name of note.
+     */
+    private void updateNotesCorrect(String noteName) {
+        updateAccuracyField(noteName, 0);
+    }
+
+    /**
+     * Increment the ith index of a note's accuracy array.
+     * 
+     * @param noteName Name of note.
+     * @param index Index to increment.
+     */
+    private void updateAccuracyField(String noteName, int index) {
+        // pull out accuracy list
+        JSONObject accuracy = jsonObject.getJSONObject("noteAccuracy");
+
+        // add new entry if needed
+        if(!accuracy.has(noteName)) {
+            JSONArray acc = new JSONArray();
+            acc.put(0);
+            acc.put(0);
+            accuracy.put(noteName, acc);
+        }
+
+        // update times asked
+        JSONArray thisNoteAccuracy = accuracy.getJSONArray(noteName);
+        int timesAsked = thisNoteAccuracy.getInt(index) + 1;
+        thisNoteAccuracy.put(index, timesAsked);
+        
+        // store
+        accuracy.put(noteName, thisNoteAccuracy);
+        jsonObject.put("noteAccuracy", accuracy);
     }
 }

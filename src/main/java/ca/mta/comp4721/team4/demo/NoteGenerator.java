@@ -10,9 +10,9 @@ import java.util.Random;
  */
 public class NoteGenerator {
     /**
-     * Possible notes.
+     * Possible notes for the treble clef.
      */
-    private static final String[] notes = new String[]{
+    private static final String[] TREBLE_NOTES = new String[]{
         "c4", "cs4", 
         "d4", "ds4", 
         "e4", // no e sharp
@@ -21,6 +21,20 @@ public class NoteGenerator {
         "a5", "as5",
         "b5", // no b sharp
         "c5"
+    };
+
+    /**
+     * Possible notes for the bass clef.
+     */
+    private static final String[] BASS_NOTES = new String[]{
+        "c3", "cs3", 
+        "d3", "ds3", 
+        "e3", // no e sharp
+        "f3", "fs3",
+        "g3", "gs3",
+        "a4", "as4",
+        "b4", // no b sharp
+        "c4"
     };
 
     /**
@@ -36,9 +50,17 @@ public class NoteGenerator {
      * 
      * @return Random note between C4 and C5.
      */
-    public static String note() {
+    public static String note(String clef) {
         Random random = new Random();
-        int noteIndex = random.nextInt(notes.length);
-        return notes[noteIndex];
+
+        if(clef.toLowerCase().equals("bass")) {
+            int bassIndex = random.nextInt(BASS_NOTES.length);
+            return BASS_NOTES[bassIndex];
+        }
+
+        int trebleIndex = random.nextInt(TREBLE_NOTES.length);
+        return TREBLE_NOTES[trebleIndex];
     }
+
+
 }
