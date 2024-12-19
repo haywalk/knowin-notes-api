@@ -1,28 +1,6 @@
-<a name="top"></a>
-![logo](https://github.com/user-attachments/assets/84c0330b-6453-4ca6-9fed-d6562f1683b3)
+# Knowin' Notes REST API
 
-[![Backend Framework](https://img.shields.io/badge/backend_framework-Java-orange)](https://docs.oracle.com/en/java/javase/11/docs/api/index.html)
-[![Backend Runtime](https://img.shields.io/badge/backend_runtime-NodeJS-339933)](https://nodejs.org/)
-[![Package Manager](https://img.shields.io/badge/package_manager-npm-red)](https://www.npmjs.com/)
-[![Frontend Library](https://img.shields.io/badge/frontend_library-React-brightgreen)]([https://docs.oracle.com/en/java/javase/11/docs/api/index.html](https://react.dev/))
-[![OS](https://img.shields.io/badge/OS-Windows-0078D4)](https://www.microsoft.com/en-ca/windows?r=1)
-[![Last Commit](https://img.shields.io/badge/last_commit-November-green)](#)
-[![Release Date](https://img.shields.io/badge/release_date-December-blue)](#)
-
-# Team-4
-
-*Knowin’ Notes* is an application that aids users in learning to sight read for piano. Users achieve their sight reading ambitions by correctly identifying musical notation (notes, chords, and arpeggiated patterns) with a MIDI keyboard or their device screen. As the user’s sight reading skills improve, they will be prompted with notation of increasing difficulty. Those who teach music, music students, and pianists that want to improve their sight reading abilities are demographics for which we expect Knowin’ Notes to have the greatest impact.
-
-<div align="center">
-  <img src="https://github.com/COMP4721-F24/Team-4/blob/main/docs/GUI Visuals/ModifiedSettingsGame.jpg?raw=true" alt="gameplay" width="100%">
-</div>
-
-## Table of Contents
-- [Team-4](#team-4)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [API Specification](#api-specification)
-  - [Links](#links)
+This is the backend for [Knowin' Notes](https://github.com/haywalk/knowin-notes), a web application intended to teach the user how to sight read piano music. This application was developed as part of COMP 4721 (Software Design) at Mount Allison University in Fall 2024, and I have mirrored the repository here for posterity. The API is written in Java using Spring, with Gradle as the build system.
 
 ## Installation
 
@@ -43,7 +21,3 @@ Requires Gradle 8.10.2, Java 17, and `pdflatex` to be installed. Run using `grad
   <dt>/api/GENERATE_PDF?id=<code>id</code></dt>
   <dd>Return a PDF document containing the report with ID <code>id</code>.</dd>  
 </dl>
-
-## Links
-
-[Back to top](#top)
